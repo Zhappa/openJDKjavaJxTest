@@ -1,0 +1,54 @@
+buildscript {
+    ext.kotlin_version = '1.3.31'
+    ext.tornadoFx_version = '1.7.19'
+    ext.javaFx_plugin_version = '0.0.7'
+    repositories {
+        mavenCentral()
+        jcenter()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "org.openjfx:javafx-plugin:$javaFx_plugin_version"
+    }
+}
+
+apply plugin: 'kotlin'
+apply plugin: 'application'
+// JavaFx for openJDK support
+apply plugin: 'org.openjfx.javafxplugin'
+
+mainClassName = 'com.ly.mike.AppKt'
+
+defaultTasks 'run'
+
+repositories {
+    mavenCentral()
+}
+
+// Minimum jvmTarget of 1.8 needed since Kotlin 1.1
+compileKotlin {
+    kotlinOptions.jvmTarget= 1.8
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation "no.tornado:tornadofx:$tornadoFx_version"
+    testImplementation 'junit:junit:4.11'
+    testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
+}
+
+jar {
+    manifest { attributes 'Main-Class': 'com.ly.mike.AppKt' }
+    from { configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+}
+
+javafx {
+    modules = [ 'javafx.controls', 'javafx.fxml' ]
+}
+
+wrapper {
+    gradleVersion = "5.4.1"
+}
